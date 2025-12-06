@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeList: document.getElementById('active-list'),
         btnExploit: document.getElementById('btnExploit'),
         cmdInput: document.getElementById('cmdInput'),
+        exTarget: document.getElementById('exTarget'),
         exploitStatus: document.getElementById('exploit-status'),
         exploitResult: document.getElementById('exploit-result'),
         rceOutput: document.getElementById('rce-output')
@@ -68,12 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Interaction: RCE Exploit ---
         el.btnExploit.addEventListener('click', () => {
             const cmd = el.cmdInput.value || "whoami";
+            const targetUrl = el.exTarget.value || "/adfa";
             el.btnExploit.disabled = true;
             el.exploitStatus.style.display = 'block';
             el.exploitResult.style.display = 'none';
             el.rceOutput.className = 'console-out';
 
-            browser.tabs.sendMessage(tabId, {action: "run_exploit", cmd: cmd}).then((res) => {
+            browser.tabs.sendMessage(tabId, {action: "run_exploit", cmd: cmd, targetUrl}).then((res) => {
                 el.btnExploit.disabled = false;
                 el.exploitStatus.style.display = 'none';
                 el.exploitResult.style.display = 'block';

